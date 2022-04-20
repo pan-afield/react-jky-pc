@@ -3,9 +3,24 @@ import './index.scss'
 import logo from '@/assets/logo.png'
 import { Form, Input, Button, Checkbox, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { useDispatch } from 'react-redux'
+import { useHistory } from 'react-router-dom'
+import { login } from '@/store/actions'
+import { useLocation } from 'react-router-dom'
 
 const Login = () => {
-    const onFinish = (values) => {
+    const dispatch = useDispatch()
+    const history = useHistory()
+    const location = useLocation()
+    const onFinish = async (values) => {
+        const { mobile, code } = values
+        try {
+            await dispatch(login(mobile, code))
+            message.success('登录成功')
+            history.replace(location?.state?.returnUrl || '/')
+        } catch (e) {
+            message.error(e.response?.data?.message || '登录失败')
+        }
         console.log(values);
     }
     return (
